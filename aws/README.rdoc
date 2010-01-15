@@ -44,6 +44,8 @@ All actions must specify :aws_access_key and :aws_secret_access_key
 * :snapshot_id
 * :timeout
 
+===== Description
+
 It will create a new volume if :volume_id is NOT set. The new volume will be set to :size and :availability_zone. 
 
 If  :snapshot_id is set, the specified snapshot will be used to create the EBS Volume Instance. The specified snapshot must have the same size and availability zone as specified by the attributes.
@@ -63,6 +65,8 @@ It will NOT raise and exception if it is an attempt to reattach an already attac
 
 * :timeout
 
+===== Description
+
 Attaches the EBS Volume Instance specified by :volume_id or the one previously set up by a :create call to the Linux Device path specified by :device for the current EC2 Instance
 
 An exception is raised if the volume_id is already attached to another EC2 instance.
@@ -77,6 +81,8 @@ An exception is raised if the volume_id is already attached to another EC2 insta
 
 * :timeout
 
+===== Description
+
 Detaches an already attached EBS Volume Instance from the current EC2 Instance. The volume can be specified by :volume_id or to an already attached volume
 
 Will do nothing if the specified :volume_id is not attached to the current EC2 instance
@@ -86,6 +92,8 @@ Will do nothing if the specified :volume_id is not attached to the current EC2 i
 ==== Required attributes
 
 * :volume_id
+
+===== Description
 
 Make an EBS snapsot of an EBS Volume specified by :volume_id
 
@@ -97,6 +105,8 @@ Make an EBS snapsot of an EBS Volume specified by :volume_id
 
 * :ip
 
+===== Description
+
 Associate an AWS Elastic IP address with the current EC2 instance. 
 
 The Elastic IP address has to have been previously  allocated from AWS to your account (specified by the :aws_access_key). You will have to use the ec2-tools, elasticfox or some other ec2 management tool to get the IP. This LWRP does not have an action to request an IP address.
@@ -106,5 +116,7 @@ The Elastic IP address has to have been previously  allocated from AWS to your a
 ==== Required attributes
 
 * :ip
+
+===== Description
 
 This function will disassociate and free up the Elastic IP address specified by :ip. Once its disassociated, it can be used again via the :associate action or by another EC2 instance.
