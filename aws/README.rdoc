@@ -32,10 +32,10 @@ All the following actions are operating on the current EC2 Instance that is runn
 
 All actions must specify :aws_access_key and :aws_secret_access_key
 
-=== :create 
 === Create an attachable EBS Volume Instance
+==== :create 
 
-==== Required attributes
+===== Required attributes
 
 * :size
 * :availability_zone
@@ -55,10 +55,10 @@ If a volume is already associated with this resource from an early attach, the c
 
 It will NOT raise and exception if it is an attempt to reattach an already attached volume that meets the :size and :availability_zone
 
-=== :attach 
 === Attach an EBS Volume Instance to the current EC2 instance
+==== :attach 
 
-==== Required attributes
+===== Required attributes
 
 * :volume_id
 * :device
@@ -73,10 +73,10 @@ Attaches the EBS Volume Instance specified by :volume_id or the one previously s
 
 An exception is raised if the volume_id is already attached to another EC2 instance.
 
-=== :detatch
 === Detach an EBS Volume Instance from current EC2 Instance
+==== :detatch
 
-==== Required attributes
+===== Required attributes
 
 * :volume_id
 
@@ -90,10 +90,10 @@ Detaches an already attached EBS Volume Instance from the current EC2 Instance. 
 
 Will do nothing if the specified :volume_id is not attached to the current EC2 instance
 
-=== :snapshot
 === Create an EBS snapshot of EBS Volume
+==== :snapshot
 
-==== Required attributes
+===== Required attributes
 
 * :volume_id
 
@@ -103,10 +103,10 @@ Make an EBS snapsot of an EBS Volume specified by :volume_id
 
 == elastic_ip actions
 
-=== :associate
 === Associate an Elastic IP to the Currrent EC2 instance
+==== :associate
 
-==== Required attributes
+===== Required attributes
 
 * :ip
 
@@ -116,10 +116,10 @@ Associate an AWS Elastic IP address with the current EC2 instance.
 
 The Elastic IP address has to have been previously  allocated from AWS to your account (specified by the :aws_access_key). You will have to use the ec2-tools, elasticfox or some other ec2 management tool to get the IP. This LWRP does not have an action to request an IP address.
 
-=== :disassociate
 === Disassociate an Elastic IP to this instance
+==== :disassociate
 
-==== Required attributes
+===== Required attributes
 
 * :ip
 
