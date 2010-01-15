@@ -1,0 +1,110 @@
+= DESCRIPTION:
+
+The AWS LWRP gives control of Amazon Web Services (AWS) Elastic Block Store (EBS) and Elastic IP. They are pretty much separate sets of AWS capability and only share the AWS configuration information.
+
+All the following actions are operating on the current EC2 Instance that is running the recipe that is calling this resource.
+
+= REQUIREMENTS:
+
+= ATTRIBUTES: 
+
+== ebs_volume
+
+:aws_access_key				Your Amazon Web Services Key
+:aws_secret_access_key		Your Amazon Web Services Secret Access Key
+:size						Size in MB of the EBS Volume to create
+:snapshot_id				EBS Snapshot IT used to specify snapshot for create or snapshoting
+:availability_zone			AWS Availability Zone (us-east-1a, us-east-1b, us-west-1a, etc.)
+:device						EC2 Instance Linux Device path (/dev/sda thru /dev/sdp) to attach to
+:volume_id					EBS Volume ID used for attach, detach or snapshotting
+:timeout	               	Time to wait before declaring operation failed Default is3 mins, nil or 0 for no timeout
+
+== elastic_ip
+
+:aws_access_key				Your Amazon Web Services Key
+:aws_secret_access_key		Your Amazon Web Services Secret Access Key
+:ip							Elastic IP Address to associate or disassociate with the current EC2 Instance
+:timeout	               	Time to wait before declaring operation failed Default is3 mins, nil or 0 for no timeout
+
+= USAGE:
+
+== ebs_volume actions
+
+All actions must specify :aws_access_key and :aws_secret_access_key
+
+=== :create Create an attachable EBS Volume Instance
+
+==== Required attributes
+
+* :size
+* :availability_zone
+
+===== Optional attributes
+
+* :snapshot_id
+* :timeout
+
+It will create a new volume if :volume_id is NOT set. The new volume will be set to :size and :availability_zone. 
+
+If  :snapshot_id is set, the specified snapshot will be used to create the EBS Volume Instance. The specified snapshot must have the same size and availability zone as specified by the attributes.
+
+If a volume is already associated with this resource from an early attach, the call will raise an exception if the already attached node is not the same :size or :availability_zone as requested. 
+
+It will NOT raise and exception if it is an attempt to reattach an already attached volume that meets the :size and :availability_zone
+
+=== :attach Attach an EBS Volume Instance to the current EC2 instance
+
+==== Required attributes
+
+* :volume_id
+* :device
+
+===== Optional attributes
+
+* :timeout
+
+Attaches the EBS Volume Instance specified by :volume_id or the one previously set up by a :create call to the Linux Device path specified by :device for the current EC2 Instance
+
+An exception is raised if the volume_id is already attached to another EC2 instance.
+
+=== :detatch Detach an EBS Volume Instance from current EC2 Instance
+
+==== Required attributes
+
+* :volume_id
+
+===== Optional attributes
+
+* :timeout
+
+Detaches an already attached EBS Volume Instance from the current EC2 Instance. The volume can be specified by :volume_id or to an already attached volume
+
+Will do nothing if the specified :volume_id is not attached to the current EC2 instance
+
+=== :snapshot Create an EBS snapshot of EBS Volume
+
+==== Required attributes
+
+* :volume_id
+
+Make an EBS snapsot of an EBS Volume specified by :volume_id
+
+== elastic_ip actions
+
+=== :associate Associate an Elastic IP to the Currrent EC2 instance
+
+==== Required attributes
+
+* :ip
+
+Associate an AWS Elastic IP address with the current EC2 instance. 
+
+The Elastic IP address has to have been previously  allocated from AWS to your account (specified by the :aws_access_key). You will have to use the ec2-tools, elasticfox or some other ec2 management tool to get the IP. This LWRP does not have an action to request an IP address.
+
+=== :disassociate Disassociate an Elastic IP to this instance
+
+==== Required attributes
+
+* :ip
+
+This function will disassociate and free up the Elastic IP address specified by :ip. Once its disassociated, it can be used again via the :associate action or by another EC2 instance.
