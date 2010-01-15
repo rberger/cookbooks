@@ -129,22 +129,24 @@ This function will disassociate and free up the Elastic IP address specified by 
 
 = Examples
 
-== Using aws:ebs_volume :attach
+== Using aws:ebs_volume
 
 === Doing a simple attach
 
 The following creates a resource called "mysql_data_volume" that will attach an EBS Volume with the ID "vol-5ebf7b06". It won't run if something is already mounted on /dev/sdh.
 
-aws_ebs_volume "mysql_data_volume" do
-  aws_access_key "0ZV2L5PE74WQJAGRGK95"
-  aws_secret_access_key "9c+JKLh1bX3bQns0igv2ETvMlvVJTAR+laazwk38"
-  volume_id "vol-5ebf7b06"
-  availability_zone "us-east-1a"
-  device "/dev/sdh"
-  action :attach
-  provider "aws_ebs_volume"
-  not_if "mount | grep "/dev/sdh"
-end
+Code:
+
+  aws_ebs_volume "mysql_data_volume" do
+    aws_access_key "0ZV2L5PE74WQJAGRGK95"
+    aws_secret_access_key "9c+JKLh1bX3bQns0igv2ETvMlvVJTAR+laazwk38"
+    volume_id "vol-5ebf7b06"
+    availability_zone "us-east-1a"
+    device "/dev/sdh"
+    action :attach
+    provider "aws_ebs_volume"
+    not_if "mount | grep "/dev/sdh"
+  end
 
 === Create and attache several EBS volumes, create xfs filesystems and mount each filesystem
 
@@ -153,38 +155,39 @@ This assumes that you have passed in the  attributes:
 * aws_secret_access_key: Your Amazon Secret Access Key
 
 * ebs[:volumes]: An array of hashes. Each hash has the following keys:
-** mount_point: The already created directory in the node's filesystem that we will mount the volume on
-** size: The Size of the volume to create
-** device: The system device (/dev/sdh for example) that the volume will be attached
+  - mount_point: The already created directory in the node's filesystem that we will mount the volume on
+  - size: The Size of the volume to create
+  - device: The system device (/dev/sdh for example) that the volume will be attached
 
-node[:ebs][:volumes].each do |vol|
-  
-  aws_ebs_volume "sized: #{vol[:size]}GB device: #{vol[:device]} on #{vol[:mount_point]}  data_volume" do
-    aws_access_key node[:aws_access_key]
-    aws_secret_access_key node[:aws_secret_access_key]
-    availability_zone node[:runa][:availability_zone]
-    device "#{vol[:device]}"
-    size vol[:size]
-    action [:create, :attach]
-    provider "aws_ebs_volume"
-    not_if "mount | grep \"#{vol[:mount_point]}\""
+Code:
+
+  node[:ebs][:volumes].each do |vol|
+
+    aws_ebs_volume "sized: #{vol[:size]}GB device: #{vol[:device]} on #{vol[:mount_point]}  data_volume" do
+      aws_access_key node[:aws_access_key]
+      aws_secret_access_key node[:aws_secret_access_key]
+      availability_zone node[:runa][:availability_zone]
+      device "#{vol[:device]}"
+      size vol[:size]
+      action [:create, :attach]
+      provider "aws_ebs_volume"
+      not_if "mount | grep \"#{vol[:mount_point]}\""
+    end
+
+    bash "creating xfs filesystem for #{vol[:mount_point]} #{vol[:device]}" do
+      code <<-EOH 
+      mkfs.xfs #{vol[:device]}
+      mkdir -p #{vol[:mount_point]}
+      EOH
+      not_if "mount | grep \"#{vol[:mount_point]}\""
+    end
+
+    mount "#{vol[:mount_point]}" do
+      device "#{vol[:device]}"
+      options "rw noatime"
+      fstype "xfs"
+      action [ :enable, :mount ]
+      # Do not execute if its already mounted
+      not_if "cat /proc/mounts | grep #{vol[:mount_point]}"
+    end
   end
-
-  bash "creating xfs filesystem for #{vol[:mount_point]} #{vol[:device]}" do
-    code <<-EOH 
-    mkfs.xfs #{vol[:device]}
-    mkdir -p #{vol[:mount_point]}
-    EOH
-    not_if "mount | grep \"#{vol[:mount_point]}\""
-  end
-
-  mount "#{vol[:mount_point]}" do
-    device "#{vol[:device]}"
-    options "rw noatime"
-    fstype "xfs"
-    action [ :enable, :mount ]
-    # Do not execute if its already mounted
-    not_if "cat /proc/mounts | grep #{vol[:mount_point]}"
-  end
-
-end
