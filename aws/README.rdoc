@@ -15,6 +15,7 @@ All the following actions are operating on the current EC2 Instance that is runn
 * :size							Size in MB of the EBS Volume to create
 * :snapshot_id					EBS Snapshot IT used to specify snapshot for create or snapshoting
 * :availability_zone			AWS Availability Zone (us-east-1a, us-east-1b, us-west-1a, etc.)
+* :region						AWS Region defaults to us-east-1, Must match Availability Zone
 * :device						EC2 Instance Linux Device path (/dev/sda thru /dev/sdp) to attach to
 * :volume_id					EBS Volume ID used for attach, detach or snapshotting
 * :timeout		               	Time to wait before declaring operation failed Default is3 mins, nil or 0 for no timeout
@@ -101,6 +102,21 @@ Will do nothing if the specified :volume_id is not attached to the current EC2 i
 
 Make an EBS snapsot of an EBS Volume specified by :volume_id
 
+=== Create an EBS snapshot of EBS Volume
+==== :prune
+
+===== Required attributes
+
+* :snapshots_to_keep Number of snapshots to keep
+
+===== Optional attributes
+
+* :volume_id Volume whose snapshots to prune. If not specified, uses the current volume
+
+===== Description
+
+Prune all older snapshots other than the last number :snapshots_to_keep
+
 == elastic_ip actions
 
 === Associate an Elastic IP to the Currrent EC2 instance
@@ -142,6 +158,7 @@ Code:
     aws_secret_access_key "9c+JKLh1bX3bQns0igv2ETvMlvVJTAR+laazwk38"
     volume_id "vol-5ebf7b06"
     availability_zone "us-east-1a"
+    region "us-east-1"
     device "/dev/sdh"
     action :attach
     provider "aws_ebs_volume"
@@ -167,6 +184,7 @@ Code:
       aws_access_key node[:aws_access_key]
       aws_secret_access_key node[:aws_secret_access_key]
       availability_zone node[:runa][:availability_zone]
+	  region node[:runa][:region]
       device "#{vol[:device]}"
       size vol[:size]
       action [:create, :attach]
