@@ -1,6 +1,7 @@
 include Opscode::Aws::Ec2
 
 action :create do
+  Chef::Log.debug("Aws::Ec2#action:create: new_resource.region: #{new_resource.region.inspect}")
   raise "Cannot create a volume with a specific id (EC2 chooses volume ids)" if new_resource.volume_id
   if new_resource.snapshot_id =~ /vol/
     new_resource.snapshot_id(find_snapshot_id(new_resource.snapshot_id))
@@ -36,6 +37,7 @@ end
 
 action :attach do
   vol = determine_volume
+  Chef::Log.debug("Aws::Ec2#action:attach: new_resource.region: #{new_resource.region.inspect}")
 
   if vol[:aws_status] == "in-use"
     if vol[:aws_instance_id] != instance_id
