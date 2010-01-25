@@ -24,9 +24,7 @@ module Opscode
       end
 
       def ec2
-        Chef::Log.debug("Aws::Ec2#ec2: new_resource.region: #{new_resource.region.inspect}")
         region = new_resource.region.nil? ? /(\w+-\w+-\d+)(\w+)/.match(new_resource.availability_zone)[1] : new_resource.region
-        Chef::Log.debug("Aws::Ec2#ec2: region: #{region.inspect} new_resource.region: #{new_resource.region.inspect}")
         new_resource.region = region if new_resource.region.nil?
         @@ec2 ||= RightAws::Ec2.new(new_resource.aws_access_key, new_resource.aws_secret_access_key, { :logger => Chef::Log, :region => region })
       end
