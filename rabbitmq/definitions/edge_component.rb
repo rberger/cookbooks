@@ -1,4 +1,3 @@
-#
 # Cookbook Name:: rabbitmq
 # Definition:: edge_component
 #
@@ -12,6 +11,7 @@ define :edge_component do
   package "mercurial"
   
   com = params[:component]
+  revision = params[:revision]
   
   if File.exists?("/usr/lib/erlang/lib/rabbitmq-#{com}")
     bash "pull_rabbitmq_#{com}" do
@@ -24,7 +24,11 @@ define :edge_component do
       cwd   "/usr/lib/erlang/lib"
       user  "root"
       code  "hg clone http://hg.rabbitmq.com/rabbitmq-#{com}/"
-    end  
+    end
+    
+    unless revision.nil?
+      cwd   "/usr/lib/erlang/lib/rabbitmq-#{com}"
+      user  "root"
+      code  "hg update #{revision}"
   end
-  
 end

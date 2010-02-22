@@ -11,6 +11,7 @@ include_recipe 'rabbitmq::edge'
 
 edge_component "get_rabbitmq_stomp" do
   component 'stomp'
+  revision node[:rabbitmq][:stomp][:revision]
 end
 
 bash "make_rabbitmq_stomp" do

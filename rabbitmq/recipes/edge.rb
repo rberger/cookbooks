@@ -15,6 +15,7 @@ package "mercurial"
 
   edge_component "get_rabbitmq_#{com}" do
     component com
+    revision node[:rabbitmq][:version]
   end
 
 end
