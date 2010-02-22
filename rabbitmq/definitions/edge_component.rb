@@ -30,5 +30,6 @@ define :edge_component do
       cwd   "/usr/lib/erlang/lib/rabbitmq-#{com}"
       user  "root"
       code  "hg update #{revision}"
+    end
   end
 end
