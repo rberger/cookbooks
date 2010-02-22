@@ -14,11 +14,11 @@ The following attributes only apply to the edge and edge_stomp recipes
 
 == rabbitmq
 
-* :version				The Mercurual Tag or Branch to use for rabbitmq
+* :version				The Mercurual Tag or Branch to use for rabbitmq (defaults to "default" which is the latest qa'd branch)
 
 == rabbitmq[:stomp]
 
-* :version				The Mercurual Tag or Branch to use for rabbitmq-stomp adapter
+* :version				The Mercurual Tag or Branch to use for rabbitmq-stomp adapter (defaults to "default")
 
 = USAGE:
 
