@@ -14,9 +14,7 @@ All the following actions are operating on the current EC2 Instance that is runn
 * :aws_secret_access_key		Your Amazon Web Services Secret Access Key
 * :size							Size in MB of the EBS Volume to create
 * :snapshot_id					EBS Snapshot IT used to specify snapshot for create or snapshoting
-* :availability_zone			AWS Availability Zone (us-east-1a, us-east-1b, us-west-1a, etc.)
-* :region						AWS Region defaults to the region portion of the :availability_zone attribute. 
-								Can use region to override if Amazon breaks the pattern of /(\w+-\w+-\d+)(\w+)/.match(availability_zone)
+* :availability_zone			AWS Availability Zone (us-east-1a, us-east-1b, us-west-1a, etc.) The region will be deducted from the zone
 * :device						EC2 Instance Linux Device path (/dev/sda thru /dev/sdp) to attach to
 * :volume_id					EBS Volume ID used for attach, detach or snapshotting
 * :timeout		               	Time to wait before declaring operation failed Default is3 mins, nil or 0 for no timeout
@@ -159,7 +157,6 @@ Code:
     aws_secret_access_key "9c+JKLh1bX3bQns0igv2ETvMlvVJTAR+laazwk38"
     volume_id "vol-5ebf7b06"
     availability_zone "us-east-1a"
-    region "us-east-1"
     device "/dev/sdh"
     action :attach
     provider "aws_ebs_volume"
@@ -185,7 +182,6 @@ Code:
       aws_access_key node[:aws_access_key]
       aws_secret_access_key node[:aws_secret_access_key]
       availability_zone node[:runa][:availability_zone]
-	  region node[:runa][:region]
       device "#{vol[:device]}"
       size vol[:size]
       action [:create, :attach]

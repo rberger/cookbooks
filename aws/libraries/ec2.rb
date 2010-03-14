@@ -24,9 +24,9 @@ module Opscode
       end
 
       def ec2
-        region = new_resource.region.nil? ? /(\w+-\w+-\d+)(\w+)/.match(new_resource.availability_zone)[1] : new_resource.region
-        new_resource.region = region if new_resource.region.nil?
-        @@ec2 ||= RightAws::Ec2.new(new_resource.aws_access_key, new_resource.aws_secret_access_key, { :logger => Chef::Log, :region => region })
+        opts = { :logger => Chef::Log }
+        opts.merge!({:region => /(\w+-\w+-\d+)(\w+)/.match(new_resource.availability_zone)[1] }) unless new_resource.availability_zone.nil?
+        @@ec2 ||= RightAws::Ec2.new(new_resource.aws_access_key, new_resource.aws_secret_access_key, opts)
       end
 
       def instance_id
