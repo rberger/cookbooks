@@ -3,7 +3,7 @@
 # Cookbook Name:: chef
 # Attributes:: chef
 #
-# Copyright 2008-2009, Opscode, Inc
+# Copyright 2008-2010, Opscode, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,8 +36,8 @@ else
   set_unless[:chef][:serve_path] = "/srv/chef"
 end
 
-set_unless[:chef][:server_version]  = "0.8.2"
-set_unless[:chef][:client_version]  = "0.8.2"
+set_unless[:chef][:server_version]  = "0.8.6"
+set_unless[:chef][:client_version]  = "0.8.6"
 set_unless[:chef][:client_interval] = "1800"
 set_unless[:chef][:client_splay]    = "20"
 set_unless[:chef][:log_dir]         = "/var/log/chef"
@@ -45,6 +45,7 @@ set_unless[:chef][:server_port]     = "4000"
 set_unless[:chef][:webui_port]      = "4040"
 set_unless[:chef][:webui_enabled]   = false
 set_unless[:chef][:webui_admin_password] = secure_password
+set_unless[:chef][:validation_client_name] = "chef-validator"
 
 case chef[:init_style]
 when "runit"
