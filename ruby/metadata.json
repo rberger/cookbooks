@@ -1,44 +1,45 @@
 {
-    "maintainer": "Opscode, Inc.",
-    "attributes": {
-    },
-    "suggestions": {
-    },
-    "platforms": {
-      "ubuntu": [
+  "name": "ruby",
+  "description": "Installs ruby packages",
+  "long_description": "",
+  "maintainer": "Opscode, Inc.",
+  "maintainer_email": "cookbooks@opscode.com",
+  "license": "Apache 2.0",
+  "platforms": {
+    "centos": [
 
-      ],
-      "fedora": [
+    ],
+    "redhat": [
 
-      ],
-      "centos": [
+    ],
+    "fedora": [
 
-      ],
-      "debian": [
+    ],
+    "ubuntu": [
 
-      ],
-      "redhat": [
+    ],
+    "debian": [
 
-      ]
-    },
-    "dependencies": {
-    },
-    "maintainer_email": "cookbooks@opscode.com",
-    "conflicting": {
-    },
-    "version": "0.7.0",
-    "name": "ruby",
-    "recipes": {
-    },
-    "providing": {
-    },
-    "license": "Apache 2.0",
-    "replacing": {
-    },
-    "groupings": {
-    },
-    "long_description": "",
-    "recommendations": {
-    },
-    "description": "Installs ruby packages"
-  }
+    ]
+  },
+  "dependencies": {
+  },
+  "recommendations": {
+  },
+  "suggestions": {
+  },
+  "conflicting": {
+  },
+  "providing": {
+  },
+  "replacing": {
+  },
+  "attributes": {
+  },
+  "groupings": {
+  },
+  "recipes": {
+    "ruby": "Installs ruby packages"
+  },
+  "version": "0.7.3"
+}

@@ -17,10 +17,14 @@
 # limitations under the License.
 #
 
-set_unless[:riak][:package][:type] = "binary"
-set_unless[:riak][:package][:version][:major] = "0"
-set_unless[:riak][:package][:version][:minor] = "10"
-set_unless[:riak][:package][:version][:incremental] = "1"
-if node[:riak][:package][:type].eql?("source")
-  set_unless[:riak][:package][:prefix] = "/usr/local"
+default.riak.package[:type] = "binary"
+default.riak.package.version.major = "0"
+default.riak.package.version.minor = "12"
+default.riak.package.version.incremental = "0"
+default.riak.package.version.build = "1"
+default.riak.package.source_checksum = "cad9ccf56fae3adfacefb397c8c37fd95bb0367eb74d372c5120266ff98f71c8"
+if (node[:riak][:package][:type]).eql?("source")
+  default.riak.package.prefix = "/usr/local"
+  default.riak.package.config_dir = node.riak.package.prefix + "/riak/etc"
 end
+default.riak.package.config_dir = "/etc/riak"
