@@ -100,6 +100,8 @@ if node[:ec2]
     size 50
     device ebs_vol_dev
     snapshots_to_keep snapshots_to_keep
+    Chef::Log.debug("======= ebs_volume aws_ebs_volume #{db_role}_#{node[:app_environment]} aws['ec2_url']: #{aws['ec2_url']}")
+    ec2_url aws['ec2_url'] if node[:eucalyptus]
     case db_type
     when "master"
       if ebs_info['volume_id'] && ebs_info['volume_id'] =~ /vol/
@@ -147,7 +149,8 @@ if node[:ec2]
             'aws_access_key_id' => aws['aws_access_key_id'],
             'aws_secret_access_key' => aws['aws_secret_access_key'],
             'snapshots_to_keep' => snapshots_to_keep,
-            'volume_id' => ebs_info['volume_id']
+            'volume_id' => ebs_info['volume_id'],
+            'ec2_url' => aws['ec2_url']
           },
           'run_list' => [
             "recipe[database::snapshot]"
