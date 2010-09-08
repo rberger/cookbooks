@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: git
-# Recipe:: default
+# Cookbook Name:: pacman
+# Resource:: group
 #
-# Copyright 2008-2009, Opscode, Inc.
+# Copyright:: 2010, Opscode, Inc <legal@opscode.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
-case node[:platform]
-when "debian", "ubuntu"
-  package "git-core"
-else 
-  package "git"
-end
+actions :install, :remove
+
+attribute :package_name, :name_attribute => true
+attribute :options, :kind_of => String
+attribute :exists, :default => false
