@@ -1,9 +1,8 @@
 #
-# Author:: Joshua Timberman <joshua@opscode.com>
-# Cookbook Name:: chef
-# Recipe:: delete_validation
+# Cookbook Name:: samba
+# Recipe:: default
 #
-# Copyright 2010, Opscode, Inc
+# Copyright 2010, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,9 +15,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
-file Chef::Config[:validation_key] do
-  action :delete
-  backup false
-  only_if { ::File.exists?(Chef::Config[:client_key]) }
-end
+include_recipe "samba::client"

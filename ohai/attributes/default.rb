@@ -1,7 +1,6 @@
 #
-# Author:: Joshua Timberman <joshua@opscode.com>
-# Cookbook Name:: chef
-# Recipe:: delete_validation
+# Cookbook Name:: ohai
+# Attribute:: default
 #
 # Copyright 2010, Opscode, Inc
 #
@@ -16,9 +15,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
-file Chef::Config[:validation_key] do
-  action :delete
-  backup false
-  only_if { ::File.exists?(Chef::Config[:client_key]) }
-end
+# FHS location would be /var/lib/chef/ohai_plugins or similar.
+default[:ohai][:plugin_path] = "/etc/chef/ohai_plugins"

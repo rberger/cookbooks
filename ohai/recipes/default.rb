@@ -1,7 +1,6 @@
 #
-# Author:: Joshua Timberman <joshua@opscode.com>
-# Cookbook Name:: chef
-# Recipe:: delete_validation
+# Cookbook Name:: ohai
+# Recipe:: default
 #
 # Copyright 2010, Opscode, Inc
 #
@@ -16,9 +15,31 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
-file Chef::Config[:validation_key] do
-  action :delete
-  backup false
-  only_if { ::File.exists?(Chef::Config[:client_key]) }
+Ohai::Config[:plugin_path] << node.ohai.plugin_path
+Chef::Log.info("ohai plugins will be at: #{node.ohai.plugin_path}")
+
+d = directory node.ohai.plugin_path do
+  owner 'root'
+  group 'root'
+  mode 0755
+  recursive true
+  action :nothing
 end
+
+d.run_action(:create)
+
+rd = remote_directory node.ohai.plugin_path do
+  source 'plugins'
+  owner 'root'
+  group 'root'
+  mode 0755
+  action :nothing
+end
+
+rd.run_action(:create)
+
+o = Ohai::System.new
+o.all_plugins
+node.automatic_attrs.merge! o.data
