@@ -7,11 +7,25 @@ This cookbook is written primarily to use MySQL and the Opscode mysql cookbook. 
 
 This cookbook does not automatically restore database dumps, but does install tools to help with that.
 
----
+Changes
+=======
+
+## v0.99.1
+
+* Use Chef 0.10's `node.chef_environment` instead of `node['app_environment']`.
+
 Requirements
 ============
 
-Chef 0.8 or higher required.
+Chef 0.10.0 or higher required (for Chef environment use).
+
+Platform
+--------
+
+Ubuntu, Debian, Red Hat, CentOS or Fedora.
+
+Cookbooks
+---------
 
 The following Opscode cookbooks are dependencies:
 
@@ -19,12 +33,11 @@ The following Opscode cookbooks are dependencies:
 * xfs
 * aws
 
----
 Recipes
 =======
 
-ebs_volume
-----------
+ebs\_volume
+-----------
 
 Loads the aws information from the data bag. Searches the applications data bag for the database master or slave role and checks that role is applied to the node. Loads the EBS information and the master information from data bags. Uses the aws cookbook LWRP, `aws_ebs_volume` to manage the volume.
 
@@ -50,9 +63,9 @@ Searches the apps databag for applications, and for each one it will check that 
 
 Then it adds the application databag database settings to a hash, to use later.
 
-It sets up the template resource for `/etc/mysql/grants.sql`, passing in the database settings so privileges for application specific database users can be created.
+It sets up the template resource for `/etc/mysql/app_grants.sql`, passing in the database settings so privileges for application specific database users can be created.
 
-Then it will iterate over the databases and create them with the mysqladmin command, detecting their presence with the mysql rubygem. At a later date the database creation will probably be handed off to a resource/provider that uses the rubygem.
+Then it will iterate over the databases and create them with the `mysql_database` LWRP, detecting their presence with the mysql rubygem.
 
 slave
 -----
@@ -62,26 +75,22 @@ _TODO_: Retrieve the master status from a data bag, then start replication using
 snapshot
 --------
 
-Run via chef-solo. Retrieves the db snapshot configuration from the specified JSON file. Uses the `mysql_database` LWRP to lock and unlock tables, and does a filesystem freeze and EBS snapshot.
+Run via Chef Solo. Retrieves the db snapshot configuration from the specified JSON file. Uses the `mysql_database` LWRP to lock and unlock tables, and does a filesystem freeze and EBS snapshot.
 
----
 Deprecated Recipes
 ==================
 
-The following recipes are no longer used as they have been deprecated in functionality both the above.
+The following recipe is considered deprecated. It is kept for reference purposes.
 
-ebs_backup
-----------
+ebs\_backup
+-----------
 
-Older style of doing mysql snapshot and replication using Adam Jacob's [ec2_mysql][0] script and library.
+Older style of doing mysql snapshot and replication using Adam Jacob's [ec2_mysql](http://github.com/adamhjk/ec2_mysql) script and library.
 
-[0]: http://github.com/adamhjk/ec2_mysql
-
----
 Data Bags
 =========
 
-This recipe uses the apps data bag item for the specified application; see the `application` cookbook's README.txt. It also creates data bag items in a bag named 'aws' for storing volume information. In order to interact with EC2, it expects aws to have a main item:
+This cookbook uses the apps data bag item for the specified application; see the `application` cookbook's README.md. It also creates data bag items in a bag named 'aws' for storing volume information. In order to interact with EC2, it expects aws to have a main item:
 
     {
       "id": "main",
@@ -101,15 +110,14 @@ Note: with the Open Source Chef Server, the server using the database recipes mu
       ...
     }
 
-This is not required if the Chef Server is the Opscode Platform.
+This is not required if the Chef Server is the Opscode Platform, instead use the ACL feature to modify access for the node to be able to update the data bag.
 
----
 Usage
 =====
 
 Aside from the application data bag (see the README in the application cookbook), create a role for the database master. Use a role.rb in your chef-repo, or create the role directly with knife.
 
-    % knife role show my_app_database_master
+    % knife role show my_app_database_master -Fj
     {
       "name": "my_app_database_master",
       "chef_type": "role",
@@ -125,23 +133,22 @@ Aside from the application data bag (see the README in the application cookbook)
       }
     }
 
-Also create a `production` role, or other role based on your desired environment. This is also used in the `application` cookbook.
+Create a `production` environment. This is also used in the `application` cookbook.
 
-    % knife role show production
+    % knife environment show production -Fj
     {
       "name": "production",
-      "chef_type": "role",
-      "json_class": "Chef::Role",
-      "default_attributes": {
-        "app_environment": "production"
+      "description": "",
+      "cookbook_versions": {
       },
-      "description": "production environment role",
-      "run_list": [
-
-      ],
+      "json_class": "Chef::Environment",
+      "chef_type": "environment",
+      "default_attributes": {
+      },
       "override_attributes": {
       }
     }
+    
 
 The cookbook `my_app_database` is recommended to set up any application specific database resources such as configuration templates, trending monitors, etc. It is not required, but you would need to create it separately in `site-cookbooks`. Add it to the `my_app_database_master` role.
 
@@ -151,8 +158,9 @@ License and Author
 Author:: Adam Jacob (<adam@opscode.com>)
 Author:: Joshua Timberman (<joshua@opscode.com>)
 Author:: AJ Christensen (<aj@opscode.com>)
+Author:: Seth Chisamore (<schisamo@opscode.com>)
 
-Copyright 2009-2010, Opscode, Inc.
+Copyright 2009-2011, Opscode, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
