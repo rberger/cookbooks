@@ -1,5 +1,6 @@
 #
 # Author:: Joshua Timberman (<joshua@opscode.com>)
+# Author:: Robert Berger (<rberger@runa.com>)
 # Cookbook Name:: database
 # Recipe:: master
 #
@@ -23,11 +24,13 @@
 # will win out, so make sure the databags have the same passwords set for
 # the root, repl, and debian-sys-maint users.
 #
+# Modified by rberger to support multiple databases
 
-db_info = Hash.new
+dbs_info = Array.new
 root_pw = String.new
 
 search(:apps) do |app|
+  return unless app['database_master_role']
   (app['database_master_role'] & node.run_list.roles).each do |dbm_role|
     %w{ root repl debian }.each do |user|
       user_pw = app["mysql_#{user}_password"]
@@ -44,9 +47,11 @@ search(:apps) do |app|
         end
       end
     end
+    db_info = Hash.new
     app['databases'].each do |env,db|
       db_info[env] = db
     end
+    dbs_info << db_info
   end
 end
 
@@ -67,7 +72,7 @@ template "/etc/mysql/app_grants.sql" do
   group "root"
   mode "0600"
   action :create
-  variables :db_info => db_info
+  variables :dbs_info => dbs_info
 end
 
 execute "mysql-install-application-privileges" do
